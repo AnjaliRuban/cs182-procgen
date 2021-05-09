@@ -9,7 +9,7 @@ from collections import deque
 from baselines.common import explained_variance, set_global_seeds
 from .policies import build_policy
 from .model import Model
-from models.runner import Runner
+from .runner import Runner
 
 def constfn(val):
     def f(_):
@@ -86,7 +86,7 @@ def learn(*, network, env, total_timesteps, eval_env = None,
         model.load(load_path)
 
     # Instantiate the runner object
-    runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam, data_aug=data_aug, gray_p=args.gray_p)
+    runner = Runner(env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam, data_aug=data_aug, args=args)
 
     if eval_env is not None:
         eval_runner = Runner(env = eval_env, model = model,
@@ -200,7 +200,7 @@ def learn(*, network, env, total_timesteps, eval_env = None,
                 logger.logkv('eval_eprewmean', safemean([epinfo['r'] for epinfo in eval_epinfobuf]) )
                 logger.logkv('eval_eplenmean', safemean([epinfo['l'] for epinfo in eval_epinfobuf]) )
             logger.logkv('misc/time_elapsed', tnow - tfirststart)
-            if is_testing == False:
+            if not args.eval:
                 for (lossval, lossname) in zip(lossvals, model.loss_names):
                     logger.logkv('loss/' + lossname, lossval)
 

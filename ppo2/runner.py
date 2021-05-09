@@ -1,6 +1,6 @@
 import numpy as np
 import imageio
-import models.augmentation as rad
+import ppo2.augmentation as rad
 import time
 
 from baselines.common.runners import AbstractEnvRunner
@@ -13,7 +13,7 @@ class Runner(AbstractEnvRunner):
     run():
     - Make a mini batch
     """
-    def __init__(self, *, env, model, nsteps, gamma, lam, data_aug, eval_flag=False):
+    def __init__(self, *, env, model, nsteps, gamma, lam, data_aug, args, eval_flag=False):
         super().__init__(env=env, model=model, nsteps=nsteps)
         # Lambda used in GAE (General Advantage Estimation)
         self.lam = lam

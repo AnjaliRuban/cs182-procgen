@@ -2,10 +2,9 @@ import os
 import sys
 import importlib
 import tensorflow as tf
-from baselines.common.models import build_impala_cnn
-from baselines.common.models import nature_cnn
+from baselines.common.models import build_impala_cnn, nature_cnn, impala_cnn_lstm, lstm
 from procgen import ProcgenEnv
-from .ppo2.learn import learn
+from ppo2.learn import learn
 from baselines.common.vec_env import (
     VecExtractDictObs,
     VecMonitor,
@@ -26,8 +25,8 @@ def main():
     parser.add_argument('--start_level', type=int, default=0)
     parser.add_argument('--num_timesteps', type=int, default=0)
     parser.add_argument('--save_frequency', type=int, default=0)
-    parser.add_argument('--model_loc', type=str, default="exp/model/")
-    parser.add_argument('--results_loc', type=str, default="exp/model/")
+    parser.add_argument('--model_loc', type=str, default=None)
+    parser.add_argument('--results_loc', type=str, default=None)
 
     parser.add_argument('--eval', type=bool, default=False)
     parser.add_argument('--data_aug', type=str, default='normal')
@@ -48,7 +47,7 @@ def main():
 
     args = parser.parse_args()
 
-    logger.configure(dir=args.result_loc, format_strs=['csv', 'stdout'])
+    logger.configure(dir=args.results_loc, format_strs=['csv', 'stdout'])
     logger.info("Creating Environment")
     venv = ProcgenEnv(num_envs=args.num_envs, env_name=args.env_name, num_levels=args.num_levels, start_level=args.start_level, distribution_mode=args.distribution_mode)
     venv = VecExtractDictObs(venv, 'rgb')
@@ -65,9 +64,9 @@ def main():
     sess.__enter__()
 
     if args.cnn_fn == 'impala_cnn':
-        conv_fn = impala_cnn()
+        conv_fn = lambda x: build_impala_cnn(x, depths=[16,32,32], emb_size=256)
     elif args.cnn_fn == 'nature_cnn':
-        conv_fn = cnn()
+        conv_fn = lambda x: nature_cnn(x)
     elif args.cnn_fn == 'impala_cnn_lstm':
         conv_fn = impala_cnn_lstm()
     elif args.cnn_fn == 'lstm':
@@ -96,7 +95,7 @@ def main():
         save_interval=0,
         load_path=args.model_loc,
         data_aug=args.data_aug,
-        args=None,
+        args=args,
     )
 
 if __name__ == '__main__':
