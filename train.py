@@ -18,31 +18,31 @@ import os
 def main():
 
     parser = argparse.ArgumentParser(description='Process procgen training arguments.')
-    parser.add_argument('--env_name', type=str, default='fruitbot')
-    parser.add_argument('--num_envs', type=int, default=64)
-    parser.add_argument('--distribution_mode', type=str, default='easy', choices=["easy", "hard", "exploration", "memory", "extreme"])
-    parser.add_argument('--num_levels', type=int, default=0)
-    parser.add_argument('--start_level', type=int, default=0)
-    parser.add_argument('--num_timesteps', type=int, default=0)
-    parser.add_argument('--save_frequency', type=int, default=0)
-    parser.add_argument('--model_loc', type=str, default=None)
-    parser.add_argument('--results_loc', type=str, default=None)
+    parser.add_argument('--env_name', type=str, default='fruitbot', help='env to run on from procgen')
+    parser.add_argument('--num_envs', type=int, default=64, help='number of environments run simultaneously')
+    parser.add_argument('--distribution_mode', type=str, default='easy', choices=["easy", "hard", "exploration", "memory", "extreme"], help='level difficulty')
+    parser.add_argument('--num_levels', type=int, default=0, help='number of levels to train/test on')
+    parser.add_argument('--start_level', type=int, default=0, help='start level (used to avoid testing on seen levels)')
+    parser.add_argument('--num_timesteps', type=int, default=0, help='number of timesteps total to train/test on')
+    parser.add_argument('--save_frequency', type=int, default=0, help='checkpoint frequency')
+    parser.add_argument('--model_loc', type=str, default=None, help='location of pretrained model')
+    parser.add_argument('--results_loc', type=str, default=None, help='location of where to save current model/logs')
 
-    parser.add_argument('--eval', type=bool, default=False)
-    parser.add_argument('--data_aug', type=str, default='normal')
-    parser.add_argument('--gray_p', type=float, default=0.8)
+    parser.add_argument('--eval', type=bool, default=False, help='if true, does not update model')
+    parser.add_argument('--data_aug', type=str, default='normal', help='whether to apply data augmentation')
+    parser.add_argument('--gray_p', type=float, default=0.8, help='p value for grayscale data augmentation')
 
-    parser.add_argument('--value_fn', type=str, default='fc', choices=['fc', 'gmm', 'lbmdp'])
-    parser.add_argument('--cnn_fn', type=str, default='impala_cnn', choices=['impala_cnn', 'nature_cnn', 'impala_cnn_lstm', 'lstm'])
-    parser.add_argument('--entropy_fn', type=str, default='constant', choices=['constant', 'scaled'])
+    parser.add_argument('--value_fn', type=str, default='fc', choices=['fc', 'gmm', 'lbmdp'], help='value function for ppo2 critic')
+    parser.add_argument('--cnn_fn', type=str, default='impala_cnn', choices=['impala_cnn', 'nature_cnn', 'impala_cnn_lstm', 'lstm'], help='cnn for featurization')
+    parser.add_argument('--entropy_fn', type=str, default='constant', choices=['constant', 'scaled'], help='function for entropy loss coefficient')
 
 
-    parser.add_argument('--ent_coef', type=float, default=0.01)
-    parser.add_argument('--ent_scalar', type=float, default=1)
-    parser.add_argument('--seed', type=int, default=None)
-    parser.add_argument('--gamma', type=float, default=0.999)
-    parser.add_argument('--lam', type=float, default=0.95)
-    parser.add_argument('--lr',  type=float, default=5e-4)
+    parser.add_argument('--ent_coef', type=float, default=0.01, help='coefficient applied to entropy loss')
+    parser.add_argument('--ent_scalar', type=float, default=1, help='coefficient applied within sigmoid to scaled entropy coefficient')
+    parser.add_argument('--seed', type=int, default=None, help='seed for tensorflow')
+    parser.add_argument('--gamma', type=float, default=0.999, help='discount factor')
+    parser.add_argument('--lam', type=float, default=0.95, help='advantage discount factor')
+    parser.add_argument('--lr',  type=float, default=5e-4, help='learning rate for Adam')
 
 
     args = parser.parse_args()
@@ -80,7 +80,7 @@ def main():
         env=venv,
         total_timesteps=args.num_timesteps,
         eval_env = None,
-        seed=None,
+        seed=args.seed,
         nsteps=256,
         ent_coef=args.ent_coef,
         lr=args.lr,
