@@ -43,6 +43,9 @@ def main():
     parser.add_argument('--gamma', type=float, default=0.999, help='discount factor')
     parser.add_argument('--lam', type=float, default=0.95, help='advantage discount factor')
     parser.add_argument('--lr',  type=float, default=5e-4, help='learning rate for Adam')
+    parser.add_argument('--imp_h1', type=float, default=16, help='impala cnn first hidden state')
+    parser.add_argument('--imp_h2', type=float, default=64, help='impala cnn second hidden state')
+    parser.add_argument('--imp_h3', type=float, default=64, help='impala cnn third hidden state')
 
 
     args = parser.parse_args()
@@ -64,7 +67,7 @@ def main():
     sess.__enter__()
 
     if args.cnn_fn == 'impala_cnn':
-        conv_fn = lambda x: build_impala_cnn(x, depths=[16,32,32], emb_size=256)
+        conv_fn = lambda x: build_impala_cnn(x, depths=[args.imp_h1,args.imp_h2,args.imp_h3], emb_size=256)
     elif args.cnn_fn == 'nature_cnn':
         conv_fn = lambda x: nature_cnn(x)
     elif args.cnn_fn == 'impala_cnn_lstm':
