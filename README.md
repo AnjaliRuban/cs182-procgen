@@ -8,7 +8,7 @@ git clone https://github.com/AnjaliRuban/cs182-procgen.git
 conda env update --name cs182-procgen --file cs182-procgen/environment.yml
 conda activate cs182-procgen
 pip install -e cs182-procgen
-conda activate
+conda activate cs182-procgen
 ```
 ## Quick Run
 Train to match best runs:
