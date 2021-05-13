@@ -8,7 +8,6 @@ git clone https://github.com/AnjaliRuban/cs182-procgen.git
 conda env update --name cs182-procgen --file cs182-procgen/environment.yml
 conda activate cs182-procgen
 pip install -e cs182-procgen
-conda activate cs182-procgen
 ```
 ## Quick Run
 Train to match best runs:
@@ -60,3 +59,5 @@ For more detailed experiments, you may run the above with any number of flags:
 --imp_h2 IMP_H2       impala cnn second hidden state
 --imp_h3 IMP_H3       impala cnn third hidden state
 ```
+
+To see our full (messy) process, please go to https://github.com/nikmandava/cs182-final-project
